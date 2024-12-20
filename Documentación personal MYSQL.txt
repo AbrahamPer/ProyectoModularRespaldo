@@ -1,0 +1,149 @@
+Contraseña: mysql24$^ui(yuAs
+
+Para crear una base de datos: 
+create database (nombre_base_de_datos);
+create database Gestion_de_lotes;
+
+Para crear una tabla:
+create table (nombre_base_de_datos).(nombre_tabla) (
+playerid int,
+name varchar(255)
+);
+create table Gestion_de_lotes.Lotes (
+NoManzana int,
+NoLote int,
+Direccion varchar(255),
+MtsCuadrados float
+);
+create table Gestion_de_lotes.Compras (
+NoManzana int,
+NoLote int,
+CostoPorMetroCuadrado float,
+ImporteTotal long,
+Fecha date,
+IdCliente int,
+FormaDePago varchar(80)
+);
+create table Gestion_de_lotes.Clientes (
+IdCliente int,
+Nombre varchar(100),
+Domicilio varchar(255),
+Telefono varchar(255)
+);
+create table Gestion_de_lotes.Abonos (
+Fecha date,
+NoManzana int,
+NoLote int,
+NoAbono int,
+CantidadAbonada long,
+NoRecibo int,
+Saldo long
+);
+create table Gestion_de_lotes.Dolar (
+Fecha date,
+PrecioEnPesos float
+);
+create table Gestion_de_lotes.Balance (
+Fecha date,
+CantidadDeDinero double
+);
+
+Para eliminar una tabla:
+drop table (nombre_base_de_datos).(nombre_tabla);
+
+Para insertar datos dentro de una tabla:
+insert into (nombre_base_de_datos).(nombre_tabla)(playerid, name) values (1, "nombre");
+insert into Gestion_de_lotes.Lotes(NoManzana, NoLote, Direccion, MtsCuadrados) values (5, 6, "DireccionFicticia1", "67.78");
+delete from Gestion_de_lotes.Lotes where NoManzana = 5;
+insert into gestion_de_lotes.abonos(Fecha, NoManzana, NoLote, NoAbono, CantidadAbonada, NoRecibo, Saldo) values ("2023-08-09", 4, 6, 1, 345, null, null);
+
+Para insertar datos dentro de una tabla usando parámetros:
+sql = "INSERT INTO empleados (nombre, salario) VALUES (%s, %s)"
+values = ("Juan", 50000)
+cursor.execute(sql, values)
+
+Para consultar datos dentro de una tabla:
+select * from (nombre_base_de_datos).(nombre_tabla);
+
+Para contar la cantidad de tablas dentro de una base de datos:
+SELECT COUNT(*) AS cantidad_de_tablas
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'gestion_de_lotes';
+
+Para ver cuáles tablas están dentro de una base de datos:
+USE gestion_de_lotes;
+show tables;
+
+Para ver las columnas de una tabla:
+show columns from (nombre_base_de_datos).(nombre_tabla);
+
+Para activar o desactivar la capacidad de eliminar o cambiar registros:
+SET SQL_SAFE_UPDATES = 1;
+SET SQL_SAFE_UPDATES = 0;
+
+Para modificar la definición de una columna de una tabla:
+ALTER TABLE gestion_de_lotes.compras MODIFY CostoPorMetroCuadrado DECIMAL(10,2);
+
+Para eliminar un registro de una tabla:
+delete from gestion_de_lotes.abonos where NoManzana = 4;
+
+Hay que tener cuidado con el encoding ISO-8859-1, ya que incluye caracteres que nos son propias del gestor de la base de datos. 
+Abonos: ascii
+Balance: ascii
+Clientes: ascii
+Compras: ascii
+Dolar: ascii
+Lotes: ascii
+
+Cuando hay espacios en blanco en un archivo CSV, eso se puede interpretar como un error a la hora de importar los datos. Hay que poner algo en esos campos para evitar esos errores.
+
+Para agregar una columna a una tabla:
+alter table (nombre_base_de_datos).(nombre_tabla)
+add column (nombre_columna) (tipo_de_dato); 
+o bien ponerla en una posición específica:
+alter table (nombre_base_de_datos).(nombre_tabla)
+add column (nombre_columna) (tipo_de_dato) after (nombre_de_la_otra_columna); 
+
+Para eliminar una columna de una tabla:
+alter table (nombre_base_de_datos).(nombre_tabla)
+drop column (nombre_columna);
+
+Para cambiar el tipo de dato de una columna:
+alter table (nombre_base_de_datos).(nombre_tabla)
+modify column (nombre_columna) (nuevo_tipo_de_dato);
+
+Para cambiar el nombre de una columna:
+alter table (nombre_base_de_datos).(nombre_tabla)
+change column (nombre_columna_a_cambiar) (nuevo_nombre_de_columna) (tipo_de_dato);
+
+Para modificar el contenido de una columna de un registro:
+update (nombre_base_de_datos).(nombre_tabla) set (nombre_columna) = (nuevo_dato) where (condición);
+
+Para sumar columnas de una tabla:
+SELECT nombre_producto, precio_unitario, cantidad, 
+       (precio_unitario + 10) AS precio_con_incremento
+FROM productos;
+SELECT Fecha, IdBalance, Pasivos, PatrimonioNeto, Activos, (Pasivos + Activos) AS sumaDePrueba FROM gestion_de_lotes.Balance;
+
+Un trigger es un conjunto de instrucciones SQL que se ejecutan automáticamente en respuesta a ciertos eventos, como una inserción o actualización. Este es un ejemplo: 
+CREATE TRIGGER before_insert_productos
+BEFORE INSERT ON productos
+FOR EACH ROW
+BEGIN
+    SET NEW.total = NEW.precio_unitario + NEW.cantidad;
+END;
+
+Para eliminar todos los registros de una tabla sin afectar la estructura de la misma:
+DELETE FROM (nombre_base_de_datos).(nombre_tabla);
+
+Para editar el contenido de una tabla que contiene solamente un registro:
+UPDATE tu_tabla SET columna1 = 'nuevo_valor1', columna2 = 'nuevo_valor2' LIMIT 1
+
+Para reemplazar los registros de una tabla: 
+REPLACE INTO nombre_de_la_tabla (columna1, columna2, ...)
+VALUES (valor1, valor2, ...);
+
+Para hacer que una columna funcione como identificador de registros:
+alter table gestion_de_lotes.Clientes add primary key (IdCliente);
+alter table gestion_de_lotes.Clientes modify IdCliente int auto_increment;
+
