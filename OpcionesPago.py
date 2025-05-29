@@ -2,11 +2,11 @@ from datetime import datetime  # Librería para obtener la fecha y hora actuales
 import inspect  # Librería para implementar una pila de llamadas de funciones
 
 
-class PaymentOptions:  # Definición de la clase de las modalidades de pago
+class OpcionesPago:  # Definición de la clase de las modalidades de pago
     def __init__(self, conn):  # Constructor de la clase
         self.connection = conn  # Atributo que guarda la conexión a la base de datos
 
-    def cash_payment(self, cursor, lote, manzana, sqm_price, lot_price, client_id):
+    def pago_de_contado(self, cursor, lote, manzana, sqm_price, lot_price, client_id):
         """Función de pago de contado: Solamente se ingresa un pago único"""
         while True:  # Bucle para solicitar el pago las veces que sean necesarias en caso de que no se ingrese una
             # cantidad que liquide la deuda
@@ -18,8 +18,8 @@ class PaymentOptions:  # Definición de la clase de las modalidades de pago
                 break  # Salir del bucle
         print(f"Cambio: ${payment - lot_price} pesos")  # Cantidad de dinero excedente
         # Llamada a la función que registra la compra y actualiza el estatus del lote correspondiente
-        PaymentOptions.purchase_table_row_insertion_and_lot_update(self, cursor, lote, manzana, sqm_price,
-                                                                   lot_price, client_id)
+        OpcionesPago.purchase_table_row_insertion_and_lot_update(self, cursor, lote, manzana, sqm_price,
+                                                                 lot_price, client_id)
         print("Presione enter")
         input()
         # Operación para deshacer los cambios, ya que el rollback extrañamente no funciona
@@ -30,7 +30,7 @@ class PaymentOptions:  # Definición de la clase de las modalidades de pago
         print("Operación hecha.")
 
 
-    def payment_by_installments(self, cursor, lote, manzana, sqm_price, lot_price, client_id):
+    def pago_por_anticipo_parcialidades(self, cursor, lote, manzana, sqm_price, lot_price, client_id):
         """Función de pago de anticipo, parcialidades: Se ingresan los abonos necesarios para pagar el lote"""
         settled_debt = False  # Bandera para indicar si a la hora de ingresar un abono la deuda se liquida o no
         current_date = datetime.now()  # Fecha y hora actuales
@@ -70,8 +70,8 @@ class PaymentOptions:  # Definición de la clase de las modalidades de pago
             self.connection.commit()  # Guardado de los cambios
             if settled_debt:  # Si la deuda ha sido liquidada con el abono ingresado
                 # Llamada a la función que registra la compra y actualiza el estatus del lote correspondiente
-                PaymentOptions.purchase_table_row_insertion_and_lot_update(self, cursor, lote, manzana,
-                                                                           sqm_price, lot_price, client_id)
+                OpcionesPago.purchase_table_row_insertion_and_lot_update(self, cursor, lote, manzana,
+                                                                         sqm_price, lot_price, client_id)
 
         else:  # Si no hay ningún registro del lote correspondiente en la tabla Abonos, significa que la compra apenas
             # comienza y se pagará un anticipo
@@ -97,14 +97,14 @@ class PaymentOptions:  # Definición de la clase de las modalidades de pago
                 except ValueError:  # Si el usuario ingresó un dato inválido
                     print("Ingrese datos válidos.")  # Mensaje de error correspondiente
 
-    def payment_in_kind(self, cursor, lote, manzana, sqm_price, lot_price, client_id):
+    def pago_en_especie(self, cursor, lote, manzana, sqm_price, lot_price, client_id):
         """Función de pago en especie: Se ingresa lo que se intercambió para pagar el lote"""
         # Ingreso de lo que se intercambió para liquidar la deuda
         payment_in_kind_especifications = input("¿Qué fue lo que se intercambió para liquidar la deuda? ")
         # Llamada a la función que registra la compra y actualiza el estatus del lote correspondiente
-        PaymentOptions.purchase_table_row_insertion_and_lot_update(self, cursor, lote, manzana, sqm_price,
-                                                                   lot_price, client_id,
-                                                                   payment_in_kind_especifications)
+        OpcionesPago.purchase_table_row_insertion_and_lot_update(self, cursor, lote, manzana, sqm_price,
+                                                                 lot_price, client_id,
+                                                                 payment_in_kind_especifications)
 
     def purchase_table_row_insertion_and_lot_update(self, cursor, lote, manzana, sqm_price, lot_price,
                                                     client_id, in_kind_details=None):

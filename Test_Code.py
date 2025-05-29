@@ -122,44 +122,46 @@
 ######################################################
 
 
-import mysql.connector  # Para la conexión con la base de datos MySQL
-from mysql.connector import Error  # Para manejar errores de conexión
-
-# Conectar a la base de datos MySQL
-try:
-    connection = mysql.connector.connect(
-        host='localhost',
-        database='gestion_de_lotes',
-        user='root',
-        password='mysql24$^ui(yuAs'
-    )
-
-    if connection.is_connected():  # Si la conexión ha sido exitosa
-        cursor = connection.cursor()
-        connection.autocommit = False
-        # Realizar un cambio en la base de datos
-        consulta_update = "UPDATE Gestion_de_lotes.Prueba SET NUMERO2 = 99 WHERE NUMERO1 = 1;"
-        cursor.execute(consulta_update)
-
-        # Confirmar temporalmente el cambio para que sea visible
-        connection.commit()  # Esto es necesario para que los cambios sean visibles
-        print("Cambio ejecutado, presione Enter para ver si el cambio tuvo efecto en la base de datos.")
-
-        # Espera la entrada del usuario
-        print("Funciona?")
-        input()  # El programa se detendrá hasta que el usuario presione Enter
-
-        # Revertir los cambios, deshacer lo hecho
-        connection.rollback()  # Esto revertirá el cambio realizado por el UPDATE
-
-        print("Los cambios han sido revertidos. La base de datos ha vuelto a su estado original.")
-
-        cursor.close()
-        connection.close()
-        print("Conexión a MySQL cerrada")
-
-except Error as e:
-    print("(1)Error al conectar a MySQL", e)
+# import mysql.connector  # Para la conexión con la base de datos MySQL
+# from mysql.connector import Error  # Para manejar errores de conexión
+#
+# # Conectar a la base de datos MySQL
+# try:
+#     connection = mysql.connector.connect(
+#         host='localhost',
+#         database='gestion_de_lotes',
+#         user='root',
+#         password='mysql24$^ui(yuAs'
+#     )
+#
+#     if connection.is_connected():  # Si la conexión ha sido exitosa
+#         cursor = connection.cursor()
+#         # connection.autocommit = False
+#         # Realizar un cambio en la base de datos
+#         consulta = f"SELECT * from Gestion_de_lotes.Prueba Where NUMERO1 = 1"
+#         cursor.execute(consulta)
+#
+#         resultado = cursor.fetchall()
+#         print(resultado)
+#
+#         # Confirmar temporalmente el cambio para que sea visible
+#         connection.commit()  # Esto es necesario para que los cambios sean visibles
+#         # # Espera la entrada del usuario
+#         # print("Funciona?")
+#         # input()  # El programa se detendrá hasta que el usuario presione Enter
+#         #
+#         # # Revertir los cambios, deshacer lo hecho
+#         # query = "UPDATE Gestion_de_lotes.Prueba SET NUMERO2 = 99 WHERE NUMERO1 = 1"  # Esto revertirá el cambio realizado por el UPDATE
+#         # cursor.execute(query)
+#         # connection.commit()
+#         # print("Los cambios han sido revertidos. La base de datos ha vuelto a su estado original.")
+#
+#         cursor.close()
+#         connection.close()
+#         print("Conexión a MySQL cerrada")
+#
+# except Error as e:
+#     print("(1)Error al conectar a MySQL", e)
 ######################################################
 # import inspect
 #
@@ -187,6 +189,327 @@ except Error as e:
 # obj.funcion_a()  # Salida: Código para 'funcion_a'
 # obj.funcion_b()  # Salida: Código para 'funcion_b'
 # obj.terceras()
+#######################################################################################################################
+# import csv
+# import subprocess
+# import pandas as pd
+# import requests
+# from bs4 import BeautifulSoup
+# from datetime import datetime
+# import mysql.connector
+# from mysql.connector import Error
+# from Expert_System import ExpertSystem
+# from Payment_Options import PaymentOptions
+#
+# # Importar bibliotecas de Tkinter
+# import tkinter as tk
+# from tkinter import ttk
+#
+# # Crear la ventana principal
+# root = tk.Tk()
+# root.title("Gestión de Lotes")
+#
+# # Crear frames para organizar los elementos
+# frame_menu = ttk.Frame(root, padding="10")
+# frame_menu.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+#
+# frame_content = ttk.Frame(root, padding="10")
+# frame_content.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+#
+# # Variables para almacenar los datos ingresados por el usuario
+# var_manzana = tk.StringVar()
+# var_lote = tk.StringVar()
+# var_cliente = tk.StringVar()
+# var_precio_metro = tk.StringVar()
+#
+# # Funciones básicas (se omiten las modificaciones por brevedad)
+# ...
+#
+#
+# def lot_purchase(cursor):
+#     # Limpiar el frame de contenido
+#     for widget in frame_content.winfo_children():
+#         widget.destroy()
+#
+#     # Mostrar la lista de lotes disponibles
+#     label_lotes = ttk.Label(frame_content, text="Lista de lotes disponibles:")
+#     label_lotes.grid(row=0, column=0, columnspan=2, sticky=tk.W)
+#
+#     # Consulta para obtener la información de los lotes disponibles
+#     query = "SELECT * FROM Gestion_de_lotes.Lotes WHERE Estatus = 'Disponible'"
+#     cursor.execute(query)
+#     info = cursor.fetchall()
+#     columns = cursor.column_names
+#
+#     # Mostrar la información en una tabla
+#     tabla_lotes = ttk.Treeview(frame_content, columns=columns, show="headings")
+#     for col in columns:
+#         tabla_lotes.heading(col, text=col)
+#     for row in info:
+#         tabla_lotes.insert("", tk.END, values=row)
+#     tabla_lotes.grid(row=1, column=0, columnspan=2)
+#
+#     # Campos para ingresar los datos del lote a comprar
+#     label_manzana = ttk.Label(frame_content, text="Número de manzana:")
+#     label_manzana.grid(row=2, column=0, sticky=tk.W)
+#     entry_manzana = ttk.Entry(frame_content, textvariable=var_manzana)
+#     entry_manzana.grid(row=2, column=1)
+#
+#     label_lote = ttk.Label(frame_content, text="Número de lote:")
+#     label_lote.grid(row=3, column=0, sticky=tk.W)
+#     entry_lote = ttk.Entry(frame_content, textvariable=var_lote)
+#     entry_lote.grid(row=3, column=1)
+#
+#     label_precio = ttk.Label(frame_content, text="Precio por metro cuadrado:")
+#     label_precio.grid(row=4, column=0, sticky=tk.W)
+#     entry_precio = ttk.Entry(frame_content, textvariable=var_precio_metro)
+#     entry_precio.grid(row=4, column=1)
+#
+#     # Botón para proceder con la compra
+#     def proceder_compra():
+#         # Obtener los valores ingresados por el usuario
+#         no_manzana = var_manzana.get()
+#         no_lote = var_lote.get()
+#         precio_metro = var_precio_metro.get()
+#
+#         # Realizar las operaciones necesarias para procesar la compra
+#         ...
+#
+#     button_proceder = ttk.Button(frame_content, text="Proceder con la compra", command=proceder_compra)
+#     button_proceder.grid(row=5, column=0, columnspan=2)
+#
+#
+# def main_menu(cursor):
+#     # Limpiar el frame de contenido
+#     for widget in frame_content.winfo_children():
+#         widget.destroy()
+#
+#     # Botones del menú principal
+#     button_compra = ttk.Button(frame_menu, text="Iniciar la compra de lote", command=lambda: lot_purchase(cursor))
+#     button_compra.grid(row=0, column=0, sticky=(tk.W, tk.E))
+#
+#     button_consulta_lote = ttk.Button(frame_menu, text="Consultar un lote", command=lambda: lot_consultation(cursor))
+#     button_consulta_lote.grid(row=1, column=0, sticky=(tk.W, tk.E))
+#
+#     button_sumatoria_finiquitados = ttk.Button(frame_menu, text="Consultar la sumatoria de los importes finiquitados",
+#                                                command=lambda: sum_of_settled_amounts(cursor))
+#     button_sumatoria_finiquitados.grid(row=2, column=0, sticky=(tk.W, tk.E))
+#
+#     button_sumatoria_abonos = ttk.Button(frame_menu,
+#                                          text="Consultar la sumatoria de los abonos de los lotes en proceso de compra",
+#                                          command=lambda: sum_of_payments_for_lots_to_be_sold(cursor))
+#     button_sumatoria_abonos.grid(row=3, column=0, sticky=(tk.W, tk.E))
+#
+#     button_consulta_saldo = ttk.Button(frame_menu, text="Consultar el saldo de un lote",
+#                                        command=lambda: balance_consultation(cursor))
+#     button_consulta_saldo.grid(row=4, column=0, sticky=(tk.W, tk.E))
+#
+#     button_consulta_cliente = ttk.Button(frame_menu, text="Consultar los datos de un cliente",
+#                                          command=lambda: client_consultation(cursor))
+#     button_consulta_cliente.grid(row=5, column=0, sticky=(tk.W, tk.E))
+#
+#     button_salir = ttk.Button(frame_menu, text="Salir", command=root.quit)
+#     button_salir.grid(row=6, column=0, sticky=(tk.W, tk.E))
+#
+#
+# # Función principal
+# def main():
+#     try:
+#         connection = sql_connection()
+#     except Error as e:
+#         print("Error al conectar a MySQL", e)
+#         return
+#
+#     if connection.is_connected():
+#         cursor = connection.cursor()
+#         update_dollar_price(cursor)
+#         main_menu(cursor)
+#
+#         # Iniciar el loop principal de la ventana
+#         root.mainloop()
+#
+#         connection.commit()
+#         cursor.close()
+#         connection.close()
+#         print("Conexión a MySQL cerrada")
+#
+#
+# if _name_ == "_main_":
+#     main()
+#######################################################################################################################
+# @staticmethod
+# def payment_by_installments(cursor, lote, manzana, sqm_price, lot_price, client_id):
+#     current_date = datetime.now()  # Fecha y hora actuales
+#     formatted_date = current_date.strftime("%Y-%m-%d")  # Formateo de la fecha en el formato: Año-Mes-Día
+#     print(f"Fecha: {formatted_date}\n")  # Impresión de la fecha actual al momento de ingresar un abono
+#     from Data_Import_and_processing import \
+#         get_connection  # Se importa la instancia de la conexión de la base de datos para el guardado de los cambios
+#     connection = get_connection()  # Obtención de la sesión correspondiente
+#
+#     # ... (código existente) ...
+#
+#     else:  # Si no hay ningún registro del lote correspondiente en la tabla Abonos, significa que la compra apenas comienza y se pagará un anticipo
+#     while True:  # Bucle para pedir el anticipo y el número de recibo en caso de que se ingresen datos inválidos
+#         try:
+#             # Ingreso del pago de anticipo
+#             partial_payment = float(input("Ingrese el anticipo que se pagó: $"))
+#             balance = lot_price - partial_payment  # Cálculo del saldo restante
+#             receipt_number = int(input("Ingrese el número de recibo: "))  # Ingreso del número de recibo
+#             # Inserción del anticipo a la tabla "Abonos"
+#             insert_query = (
+#                 f"INSERT INTO gestion_de_lotes.Abonos (Fecha, NoManzana, NoLote, NoAbono, CantidadAbonada, NoRecibo, Saldo) VALUES (\'{formatted_date}\', {manzana}, {lote}, 1, {partial_payment}, {receipt_number}, {balance})")
+#
+#             cursor.execute(insert_query)  # Ejecución de la consulta
+#             connection.commit()  # Guardado de los cambios en la base de datos
+#
+#             # Verificar si el saldo es cero después del abono
+#             if balance == 0:
+#                 # Actualizar el estado del lote a "Comprado"
+#                 lot_data_update = (
+#                     f"UPDATE gestion_de_lotes.Lotes SET CostoMetroCuadrado = {sqm_price}, PrecioTotal = {lot_price}, Estatus = 'Comprado' WHERE NoManzana = {manzana} AND NoLote = {lote}")
+#                 cursor.execute(lot_data_update)  # Ejecución de la operación
+#                 connection.commit()  # Guardado de los cambios
+#
+#                 # Llamar a la función purchase_table_row_insertion para registrar la compra
+#                 PaymentOptions.purchase_table_row_insertion(connection, cursor, lote, manzana, sqm_price, lot_price,
+#                                                             client_id)
+#             else:
+#                 # Operación en donde se edita el registro correspondiente al lote
+#                 lot_data_update = (
+#                     f"UPDATE gestion_de_lotes.Lotes SET CostoMetroCuadrado = {sqm_price}, PrecioTotal = {lot_price}, Estatus = 'En proceso de compra' WHERE NoManzana = {manzana} AND NoLote = {lote}")
+#                 cursor.execute(lot_data_update)  # Ejecución de la operación
+#                 connection.commit()  # Guardado de los cambios
+#
+#             break  # Salida del bucle en caso de que el anterior código haya funcionado correctamente
+#         except ValueError:  # Si el usuario ingresó un dato inválido
+#             print("Ingrese datos válidos.")  # Mensaje de error correspondiente
 
 
+# en el archivo Payment_options tengo un error de ejecución. Cuando quiero registrar un abono nuevo en la tabla abonos extrañamente el programa me reemplaza todos los registros de la tabla Abonos con los datos del nuevo abono. Identifica dónde está el problema y OJO: solamente genérame o modifícame la porción de código para solucionar el problema y no me elimines o modifiques los comentarios que te encuentres. Te adjunto también el archivo Data_import_and_processing para que entiendas la lógica del programa.
+
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from sklearn.model_selection import train_test_split
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.preprocessing import StandardScaler
+#
+# # Datos sintéticos de ejemplo
+# # X: Puntaje de examen 1, Puntaje de examen 2
+# # y: Admitido (1) o No admitido (0)
+# X = np.array([
+#     [45, 85],  # Admitido
+#     [50, 90],  # Admitido
+#     [30, 60],  # No admitido
+#     [55, 75],  # Admitido
+#     [20, 40],  # No admitido
+#     [35, 70],  # No admitido
+#     [60, 95],  # Admitido
+#     [40, 65],  # No admitido
+# ])
+#
+# y = np.array([1, 1, 0, 1, 0, 0, 1, 0])
+#
+# # Dividir datos en entrenamiento y prueba
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+#
+# # Normalizar los datos (escalar características)
+# scaler = StandardScaler()
+# X_train_scaled = scaler.fit_transform(X_train)
+# X_test_scaled = scaler.transform(X_test)
+#
+# # Crear y entrenar el modelo
+# modelo = LogisticRegression()
+# modelo.fit(X_train_scaled, y_train)
+#
+# # Evaluar precisión del modelo
+# precision = modelo.score(X_test_scaled, y_test)
+# print(f"Precisión del modelo: {precision * 100:.2f}%")
+#
+#
+# # Función para predecir admisión
+# def predecir_admision(puntaje_examen1, puntaje_examen2):
+#     datos_entrada = scaler.transform([[puntaje_examen1, puntaje_examen2]])
+#     prediccion = modelo.predict(datos_entrada)
+#     probabilidad = modelo.predict_proba(datos_entrada)[0]
+#
+#     print(f"\nPuntajes: Examen 1 = {puntaje_examen1}, Examen 2 = {puntaje_examen2}")
+#     print(f"Probabilidad de admisión: {probabilidad[1] * 100:.2f}%")
+#
+#     if prediccion[0] == 1:
+#         print("🎉 ¡Felicidades! Serás admitido.")
+#     else:
+#         print("❌ Lo siento, no fuiste admitido.")
+#
+#
+# # Ejemplos de predicción
+# predecir_admision(55, 80)
+# predecir_admision(25, 45)
+#
+# # Visualización de la frontera de decisión
+# plt.figure(figsize=(10, 6))
+# plt.scatter(X[y == 1][:, 0], X[y == 1][:, 1], color='blue', label='Admitidos')
+# plt.scatter(X[y == 0][:, 0], X[y == 0][:, 1], color='red', label='No Admitidos')
+# plt.xlabel('Puntaje Examen 1')
+# plt.ylabel('Puntaje Examen 2')
+# plt.title('Admisión Universitaria')
+# plt.legend()
+# plt.show()
+
+############################################################################################################
+
+# class Animal:
+#     def __init__(self, nombre, edad):
+#         self.nombre = nombre
+#         self.edad = edad
+#
+#     def hablar(self):
+#         print("El animal hace un sonido")
+#
+# class Perro(Animal):
+#     def __init__(self, nombre, edad, raza):
+#         super().__init__(nombre, edad)
+#         self.raza = raza
+#         self.raza = raza
+#
+#     def hablar(self):
+#         print(f"El perro {self.nombre} ladra")
+#
+# class Gato(Animal):
+#     def __init__(self, nombre, edad, color):
+#         super().__init__(nombre, edad)
+#         self.color = color
+#
+#     def hablar(self):
+#         print(f"El gato {self.nombre} maúlla")
+#
+# perro1 = Perro("Max", 3, "Labrador")
+# gato1 = Gato("Whiskers", 2, "Negro")
+#
+# perro1.hablar()
+# gato1.hablar()
+
+
+
+
+
+# from datetime import datetime
+# current_date = datetime.now()
+# print(current_date)
+
+#
+# from decimal import Decimal, InvalidOperation
+#
+# entrada = input("Ingresa el monto: ")
+#
+# try:
+#     monto = Decimal(entrada)
+#     print(f"Valor ingresado: {monto:.2f}")
+# except InvalidOperation:
+#     print("Error: El valor ingresado no es un número decimal válido.")
+
+
+# print("\033[91mEste texto es rojo\033[0m")
+# print("\033[92mEste texto es verde\033[0m")
+# print("\033[93mEste texto es amarillo\033[0m")
+# print("\033[94mEste texto es azul\033[0m")
 
